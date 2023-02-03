@@ -25,7 +25,7 @@ class StudipAuthenticator(LTIAuthenticator):
         if course_id and user_id:
             # Set combined user_id of course id and user id if instructor
             if any([role in user_roles for role in ["Instructor", "Administrator", "Staff"]]):
-                handler.request.arguments["user_id"] = f"{course_id}-{user_id}".encode()
+                handler.request.arguments["user_id"] = [f"{course_id}-{user_id}".encode()]
 
             self.log.debug(f"user-id: {handler.request.arguments['user_id']}")
 
