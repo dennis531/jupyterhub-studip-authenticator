@@ -1,0 +1,1 @@
+from studipauthenticator.studipauthenticator import StudipAuthenticator
