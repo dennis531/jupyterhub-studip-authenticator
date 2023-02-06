@@ -49,6 +49,9 @@ class StudipAuthenticator(LTIAuthenticator):
                     f"~{system_username}/{course_name}"
                 )]
             )
+            self.log.debug(["ln", "-s", course_dir, os.path.expanduser(
+                    f"~{system_username}/{course_name}"
+                )])
 
             # Add course_name to dict
             result["course_name"] = course_name
@@ -57,7 +60,7 @@ class StudipAuthenticator(LTIAuthenticator):
                 # Create course linux group with write permissions for course workspace if not existing
                 # Unix allows group ids up to 32 chars
                 course_group = f"jupyter-c-{course_id}"[:32]
-                self.log.debug(f"course-group: {user_roles}")
+                self.log.debug(f"course-group: {course_group}")
                 subprocess.check_call(["groupadd", "-f", course_group])
 
                 # Set group for course workspace
