@@ -15,7 +15,6 @@ class StudipAuthenticator(LTIAuthenticator):
     username_key = "user_id"
 
     _instructor_roles = ["Instructor", "Administrator", "Staff"]
-    _course_name = ""
     _course_id = ""
 
     def is_instructor(self, user_roles):
@@ -28,20 +27,19 @@ class StudipAuthenticator(LTIAuthenticator):
 
         user_roles = handler.get_argument("roles", "Learner").split(",")
         self._course_id = handler.get_argument("context_id", None)
-        self._course_name = handler.get_argument("context_title", None)
+        course_name = handler.get_argument("context_title", None)
         user_id = handler.get_argument("user_id", None)
 
         # Do nothing when course id and user id are not provided
         if self._course_id and user_id:
-            # For instructors replace name with composition of course id and user id
-            if self.is_instructor(user_roles):
-                result["name"] = f"{self._course_id}-{user_id}"
-
-            self.log.debug(f"user-name: {result['name']}")
-
-            system_username = generate_system_username("jupyter-" + result["name"])
+            # # For instructors replace name with composition of course id and user id
+            # if self.is_instructor(user_roles):
+            #     result["name"] = f"{self._course_id}-{user_id}"
+            #
+            # self.log.debug(f"user-name: {result['name']}")
 
             # Ensure user exists. TODO: Move these functions to custom spawner to prevent this
+            system_username = generate_system_username("jupyter-" + result["name"])
             ensure_user(system_username)
 
             # Create course workspace if not existing
@@ -52,24 +50,24 @@ class StudipAuthenticator(LTIAuthenticator):
                 os.makedirs(course_dir)
                 os.chmod(course_dir, 0o775)
 
-            # Create courses dir in home
-            home_courses_path = os.path.expanduser(f"~{system_username}/courses/")
-            if not os.path.exists(home_courses_path):
-                os.mkdir(home_courses_path, 0o770)
+            # # Create courses dir in home
+            # home_courses_path = os.path.expanduser(f"~{system_username}/courses/")
+            # if not os.path.exists(home_courses_path):
+            #     os.mkdir(home_courses_path, 0o770)
+            #
+            # # Change group to user
+            # user_gid = grp.getgrnam(system_username).gr_gid
+            # os.chown(home_courses_path, -1, user_gid, follow_symlinks=False)
 
-            # Change group to user
-            user_gid = grp.getgrnam(system_username).gr_gid
-            os.chown(home_courses_path, -1, user_gid, follow_symlinks=False)
-
-            # Remove old symlink
-            self._course_name = self._course_name if self._course_name else self._course_id
-            home_course_path = f"{home_courses_path}/{self._course_name}"
-            if os.path.exists(home_course_path):
-                os.remove(home_course_path)
-
-            # Add symlink of course workspace to home directory
-            os.symlink(course_dir, home_course_path)
-            self.log.debug(f"home-link: {home_courses_path}")
+            # # Remove old symlink
+            # course_name = course_name if course_name else self._course_id
+            # home_course_path = f"{home_courses_path}/{course_name}"
+            # if os.path.exists(home_course_path):
+            #     os.remove(home_course_path)
+            #
+            # # Add symlink of course workspace to home directory
+            # os.symlink(course_dir, home_course_path)
+            # self.log.debug(f"home-link: {home_courses_path}")
 
             try:
                 # Create course linux group with write permissions for course workspace if not existing
@@ -82,7 +80,7 @@ class StudipAuthenticator(LTIAuthenticator):
                 subprocess.check_call(["chgrp", "-Rf", course_group, course_dir])
 
                 # If instructor add user to course group
-                if any([role in user_roles for role in self._instructor_roles]):
+                if self.is_instructor(user_roles):
                     subprocess.check_call(["gpasswd", "--add", system_username, course_group])
 
             except subprocess.CalledProcessError:
@@ -97,11 +95,8 @@ class StudipAuthenticator(LTIAuthenticator):
         :param spawner: Custom spanner of tljh
         :return:
         """
-        self.log.debug(type(spawner))
-
         if self._course_id:
             # Set user working dir
-            self.log.debug(f"courses")
             spawner.user_workingdir = f'/srv/data/courses/{self._course_id}'
 
         super().pre_spawn_start(user, spawner)
