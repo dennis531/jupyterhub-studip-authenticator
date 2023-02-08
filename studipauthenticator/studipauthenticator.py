@@ -46,9 +46,7 @@ class StudipAuthenticator(LTIAuthenticator):
             course_dir = f"/srv/data/courses/{self._course_id}"
             self.log.debug(f"course-dir: {course_dir}")
             if not os.path.exists(course_dir):
-                # Owner, group: read, write, execute; other: read, execute
                 os.makedirs(course_dir)
-                os.chmod(course_dir, 0o775)
 
             # # Create courses dir in home
             # home_courses_path = os.path.expanduser(f"~{system_username}/courses/")
@@ -75,6 +73,10 @@ class StudipAuthenticator(LTIAuthenticator):
                 course_group = f"jupyter-c-{self._course_id}"[:32]
                 self.log.debug(f"course-group: {course_group}")
                 subprocess.check_call(["groupadd", "-f", course_group])
+
+                # Set course workspace mode:
+                # Owner, group: read, write, execute; other: read, execute
+                subprocess.check_call(["chmod", "-R", "775", course_dir])
 
                 # Set group for course workspace
                 subprocess.check_call(["chgrp", "-Rf", course_group, course_dir])
