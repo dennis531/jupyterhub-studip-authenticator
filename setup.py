@@ -13,9 +13,9 @@ setup(
     version='0.1.0',
     packages=['studipauthenticator'],
     url='https://github.com/dennis531/jupyterhub-studip-authenticator',
-    license='',
+    license='MIT',
     author='debenz',
     author_email='debenz@uos.de',
-    description='Stud.IP LTI Authentication for Courses',
+    description='Stud.IP LTI Authenticator for Courses',
     install_requires=install_requires
 )
