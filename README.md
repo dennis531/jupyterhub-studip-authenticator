@@ -6,14 +6,14 @@ The authenticator only works with an installation of [The littlest JupyterHub](h
 
 ## Installation
 - Install and configure tljh (https://tljh.jupyter.org/en/latest/install/index.html)
-- Clone this repo: `git clone TODO`
-- `cd TODO`
-- Install with pip: `sudo /opt/tljh/hub/bin/python -m pip install .`
+- Clone this repository: `git clone https://github.com/virtUOS/jupyterhub-studip-authenticator.git`
+- Navigate to cloned directory: `cd jupyterhub-studip-authenticator`
+- Install this authenticator using pip: `sudo /opt/tljh/hub/bin/python -m pip install .`
 - Change tljh configs:
   - `sudo tljh-config set auth.type studipauthenticator.StudipAuthenticator`
   - `sudo tljh-config set StudipAuthenticator.consumers {CONSUMER_KEY, CONSUMER_SECRET}`. Replace and configure `CONSUMER_KEY` and `CONSUMER_SECRET` as mentioned in https://github.com/jupyterhub/ltiauthenticator#the-consumers-setting-lti11authenticatorconsumers. Possibly you need to edit the file manually: `sudo vi /opt/tljh/config/config.yaml`, because the previous command sets unwanted quotation marks.
   - Check configurations: `sudo tljh-config show`
-    - The configuration should contain the following: 
+    - The configuration should contain similar information: 
         ```yaml
         auth:
         StudipAuthenticator:
