@@ -11,16 +11,16 @@ The authenticator only works with an installation of [The littlest JupyterHub](h
 - Install this authenticator using pip: `sudo /opt/tljh/hub/bin/python -m pip install .`
 - Change tljh configs:
   - `sudo tljh-config set auth.type studipauthenticator.StudipAuthenticator`
-  - `sudo tljh-config set StudipAuthenticator.consumers {CONSUMER_KEY, CONSUMER_SECRET}`. Replace and configure `CONSUMER_KEY` and `CONSUMER_SECRET` as mentioned in https://github.com/jupyterhub/ltiauthenticator#the-consumers-setting-lti11authenticatorconsumers. Possibly you need to edit the file manually: `sudo vi /opt/tljh/config/config.yaml`, because the previous command sets unwanted quotation marks.
+  - `sudo tljh-config set auth.StudipAuthenticator.consumers {CONSUMER_KEY, CONSUMER_SECRET}`. Replace and configure `CONSUMER_KEY` and `CONSUMER_SECRET` as mentioned in https://github.com/jupyterhub/ltiauthenticator#the-consumers-setting-lti11authenticatorconsumers. Possibly you need to edit the file manually: `sudo vi /opt/tljh/config/config.yaml`, because the previous command sets unwanted quotation marks.
   - Check configurations: `sudo tljh-config show`
     - The configuration should contain similar information: 
         ```yaml
         auth:
-        StudipAuthenticator:
-          consumers: {123: 456}
+          StudipAuthenticator:
+            consumers: {123: 456}
         type: studipauthenticator.StudipAuthenticator
         ```
-    - Restart the server: `sudo tljh-config reload`
+  - Restart the server: `sudo tljh-config reload`
 - Configure Jupyter-LTI-Tool in Stud.IP: 
     - Admin (global): see https://hilfe.studip.de/admin/GlobalEinstellungen/LTI-Tools
     - User: see https://hilfe.studip.de/help/4.0/de/Basis/LTI-Tools
